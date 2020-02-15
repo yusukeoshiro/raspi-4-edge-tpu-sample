@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM yusukeoshiro/opencv-arm
 WORKDIR /app
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -21,21 +21,24 @@ RUN apt-get -qq update && DEBIAN_FRONTEND=noninteractive apt-get -y \
     python3-tk \
     libharfbuzz-dev libfribidi-dev && apt-get clean
 RUN apt-get install -yq  libssl-dev openssl build-essential gcc
-RUN apt-get install -y python3.7 python3.7-dev python3.7-distutils
+RUN apt-get install -y python3 python3-dev python3-distutils
 
-RUN wget https://bootstrap.pypa.io/get-pip.py
-RUN python3.7 get-pip.py
-RUN python3.7 -m pip install --upgrade Pillow
-RUN python3.7 -m pip install --upgrade numpy
+# RUN wget https://bootstrap.pypa.io/get-pip.py
+# RUN python3.7 get-pip.py
+
+RUN python3 -m pip install --upgrade cython
+RUN python3 -m pip install --upgrade wheel
+RUN python3 -m pip install --upgrade Pillow
+RUN python3 -m pip install --upgrade numpy
 
 RUN apt-get update -y && apt-get install -yq wget libssl-dev openssl build-essential gcc zlib1g-dev
 RUN apt-get install -y usbutils curl
 
 # RUN python3.7 -m pip install --upgrade opencv-python
-RUN python3.7 -m pip install https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp37-cp37m-linux_aarch64.whl
+RUN python3 -m pip install https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp36-cp36m-linux_aarch64.whl
 
 
 RUN git clone https://github.com/google-coral/tflite.git
-RUN cd tflite/python/examples/classification && bash install_requirements.sh 
+RUN cd tflite/python/examples/classification && bash install_requirements.sh
 
-CMD ["cd tflite/python/examples/classification && python3.7 classify_image.py --model models/mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite --labels models/inat_bird_labels.txt --input images/parrot.jpg"]
+CMD ["cd tflite/python/examples/classification && python3 classify_image.py --model models/mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite --labels models/inat_bird_labels.txt --input images/parrot.jpg"]
